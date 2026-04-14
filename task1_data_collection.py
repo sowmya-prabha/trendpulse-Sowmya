@@ -4,10 +4,7 @@ import json
 from datetime import datetime
 import os
 print(os.getcwd())
-
 headers = {"User-Agent": "TrendPulse/1.0"}
-
-# Category keywords
 CATEGORIES = {
     "technology": ["ai", "software", "tech", "code", "computer", "data", "cloud", "api", "gpu", "llm"],
     "worldnews": ["war", "government", "country", "president", "election", "climate", "attack", "global"],
@@ -23,21 +20,17 @@ def get_category(title):
             if f" {word} " in title:
                 return category
     return "others" 
-
-
 def fetch_data():
     url = "https://hacker-news.firebaseio.com/v0/topstories.json"
 
     try:
         ids = requests.get(url, headers=headers, timeout=5).json()[:200]  # reduced for speed
     except Exception as e:
-        print("❌ Error fetching IDs:", e)
+        print("Error fetching IDs:", e)
         return []
-
     collected = []
     category_count = {cat: 0 for cat in CATEGORIES}
     category_count["others"] = 0
-
     seen_titles = set()
 
     for story_id in ids:
@@ -62,7 +55,7 @@ def fetch_data():
             category = get_category(title)
 
             # DEBUG (you can remove later)
-            print(f"📌 {title} --> {category}")
+            print(f"{title} --> {category}")
 
             story = {
                 "post_id": data.get("id"),
@@ -84,30 +77,22 @@ def fetch_data():
             time.sleep(0.1)  # prevent API overload
 
         except Exception as e:
-            print(f"❌ Error fetching {story_id}: {e}")
+            print(f"Error fetching {story_id}: {e}")
 
-    print("\n✅ Total collected:", len(collected))
+    print("\nTotal collected:", len(collected))
     return collected
-
-
 def save_json(data):
     if not data:
         print("⚠ No data collected. File not saved.")
         return
-
     os.makedirs("data", exist_ok=True)
     filename = f"data/trends_{datetime.now().strftime('%Y%m%d')}.json"
-
     try:
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
-
         print(f"✅ Saved successfully to {filename}")
-
     except Exception as e:
-        print("❌ Error saving file:", e)
-
-
+        print("Error saving file:", e)
 if __name__ == "__main__":
     data = fetch_data()
     save_json(data)
