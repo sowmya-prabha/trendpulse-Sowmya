@@ -46,17 +46,11 @@ def fetch_data():
                 continue
 
             title = data.get("title")
-
-            # Avoid duplicates
             if title in seen_titles:
                 continue
             seen_titles.add(title)
-
             category = get_category(title)
-
-            # DEBUG (you can remove later)
             print(f"{title} --> {category}")
-
             story = {
                 "post_id": data.get("id"),
                 "title": title,
@@ -68,13 +62,11 @@ def fetch_data():
                 "timestamp": data.get("time"),
                 "collected_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             }
-
-            # Limit per category (reduced to 10 for reliability)
             if category_count.get(category, 0) < 10:
                 collected.append(story)
                 category_count[category] += 1
 
-            time.sleep(0.1)  # prevent API overload
+            time.sleep(0.1)
 
         except Exception as e:
             print(f"Error fetching {story_id}: {e}")
@@ -83,14 +75,14 @@ def fetch_data():
     return collected
 def save_json(data):
     if not data:
-        print("⚠ No data collected. File not saved.")
+        print("No data collected. File not saved.")
         return
     os.makedirs("data", exist_ok=True)
     filename = f"data/trends_{datetime.now().strftime('%Y%m%d')}.json"
     try:
         with open(filename, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
-        print(f"✅ Saved successfully to {filename}")
+        print(f"Saved successfully to {filename}")
     except Exception as e:
         print("Error saving file:", e)
 if __name__ == "__main__":
