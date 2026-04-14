@@ -5,7 +5,7 @@ with open(file_path, "r", encoding="utf-8") as f:
     data = json.load(f)
 df = pd.DataFrame(data)
 
-print("🔹 Original Data Shape:", df.shape)
+print("Original Data Shape:", df.shape)
 df.drop_duplicates(subset=["title"], inplace=True)
 df["title"] = df["title"].fillna("No Title")
 df["author"] = df["author"].fillna("Unknown")
